@@ -1,0 +1,85 @@
+#
+# Global config.yaml -- contains all the configs of everything in one place.
+# This file should be designed primarily for human usability, to be the 
+# ultimate source of truth.
+#
+
+#
+# Host-specific configurations
+#
+machineTypes:
+
+  appliances:
+
+  xenial:
+
+    hosts:
+      - name: build
+        tools:
+          - jq
+          - yaml2json
+          - nvm
+          - node
+
+  rhel:
+
+    hosts:
+      - name: datapower1
+      - name: datapower2
+      - name: dataprod1
+        concerns: prod
+      - name: dataprod2
+        concerns: prod
+      - name: dataprod3
+        concerns: prod
+
+#
+# Service-specific configurations
+#
+services:
+
+  datapower:
+    environment:
+      qa:
+        hosts:
+          - datapower1
+          - datapower2
+        version: "7.6.0.5-nonprod"
+        firewall:
+          - idg-fwrules-qa.sh
+
+      prod:
+        hosts:
+          - dataprod1
+          - dataprod2
+          - dataprod3
+        version: "7.6.0.5-prod"
+        firewall:
+          - idg-fwrules-prod.sh
+
+    archives:
+      "7.6.0.5-nonprod":
+        installables: 
+          - idg7510.nonprod.image.x86_64.rpm 
+          - idg7510.common.x86_64.rpm 
+        fixpacks:
+          - idg_linux.7605.oradco.scrypt4 
+
+      "7.6.0.5-prod":
+        installables: 
+          - idg7510.nonprod.image.x86_64.rpm 
+          - idg7510.common.x86_64.rpm 
+        fixpacks:
+          - idg_linux.7605.oradco.scrypt4 
+
+  tools:
+    installOrder:
+      # tools will be installed in this order, regardless of order they
+      # appear in the host config
+      - nvm 
+      - node 
+      - yaml2json 
+      - jq  
+
+
+
