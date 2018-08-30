@@ -35,8 +35,8 @@ The `./services/<configType>/<configType>.sh $@` scripts are up to the user to w
 The `validate.sh` script has all the global validations. This is run before any configuration script. Ideally validations here should run quickly, cover things of global importants, and not write details to console unless either (a.) `$DEBUG_VALIDATE` is set to `true` or (b.) there's an error. To add a validation, add a new method to this script.
 
 When your validation detects an error, it should do two things:
-1. Log that there's an error (`error "error text"`)
-1. Increment the errors count (`(( errors ++ ))`)
+1. Log that there's an error `error "error text"`
+1. Increment the errors count `(( errors ++ ))`
 
 If any errors are detected, the config will end in failure after the validations are complete, but before any configurations are attempted.
 
