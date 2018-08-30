@@ -26,6 +26,19 @@ The `addTask` simply adds the task and all its dependencies to the task queue. I
 The `runTask` method adds the tasks. Usually it just sources `./services/<configType>/<configType>.sh $@`.
 
 The `./services/<configType>/<configType>.sh $@` scripts are up to the user to write. In general, they should do the following:
-	1. Accept a list of hostnames as parameters
-	1. Check if a config is already in place before overwriting it
-	1. Install the config, but only if necessary.
+1. Accept a list of hostnames as parameters
+1. Check if a config is already in place before overwriting it
+1. Install the config, but only if necessary.
+
+## Adding new validations
+
+The `validate.sh` script has all the global validations. This is run before any configuration script. Ideally validations here should run quickly, cover things of global importants, and not write details to console unless either (a.) `$DEBUG_VALIDATE` is set to `true` or (b.) there's an error. To add a validation, add a new method to this script.
+
+When your validation detects an error, it should do two things:
+1. Log that there's an error (`error "error text"`)
+1. Increment the errors count (`(( errors ++ ))`)
+
+If any errors are detected, the config will end in failure after the validations are complete, but before any configurations are attempted.
+
+
+

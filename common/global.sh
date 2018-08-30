@@ -15,7 +15,7 @@ errors=0
 
 # validations
 if [ "$VALIDATE" != "false" ]; then
-	source ${COMMON_DIR}/validate-config.sh
+	source ${DIR}/validate.sh
 fi
 
 # platform differences
