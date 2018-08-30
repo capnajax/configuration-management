@@ -3,12 +3,8 @@
 DIR=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)
 source ${DIR}/common/global.sh
 
-configsRun=()
-dependencies=() # maps command in base64 to array of dependencies in base64
-queue=()
-
 #
-#	Run this as "./configure.sh <config_type> "
+#	Run this as "./configure.sh [<config_type> [<params]] "
 #
 
 #
@@ -21,30 +17,13 @@ queue=()
 #		your actual script.	
 #
 
-function enqueue {
-
-	local outVar
-	if [ $1 == -o ]; then
-		outVar=$2
-		shift
-		shift
-	fi
-	local result=$(base64 <<< "$@")
-	if [ ! -z $outVar ]; then
-		eval "$outVar=$result"
-	fi
-	queue+=($result)
-}
-
-errors=0
-
 function addTask {
 
 	local cmd=$1
 	shift
 
-	if [ ${#queue[@]} -gt 50 ]; then
-		trace "long queue: ${queue[@]}"
+	if [ ${#_tasks_queue[@]} -gt 50 ]; then
+		trace "long queue: ${_tasks_queue[@]}"
 		error "Task queue too long. Circular dependency?"
 		end 1 "CONFIGURATION FAILED"
 	fi
@@ -96,30 +75,11 @@ function addTask {
 
 	fi
 }
-addTask $@
-
-#
-#	add dependencies to all tasks
-#
-
-function runTask {
-
-	local taskb64=$1
-
-	# don't run a task that's already been run
-	if contains "$taskb64" ${configsRun[@]}; then return 0; fi
-
-	configsRun+=($taskb64)
-
-}
-for i in "${queue[@]}"; do
-	runTask $i
-done
 
 #
 # actual task run
 #
-function taskRun {
+function runTask {
 
 	local cmd=$1
 	shift
@@ -148,13 +108,7 @@ function taskRun {
 
 	esac
 }
-for task in ${configsRun[@]}; do
-	taskRun $(debase64 <<< $task)
-done
 
-if [ $errors != 0 ]; then
-	end 1 "ERRORS IN CONFIGURATION"
-else
-	end 0 "CONFIGURATION SUCCESSFUL"
-fi
+# Run the whole config
+source ${COMMON_DIR}/tasks.sh
 

@@ -11,6 +11,8 @@ COMMON_DIR=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)
 source ${COMMON_DIR}/../utils/utils.sh friendlyIO arrays strings
 CONFIG=$(yaml2json ${COMMON_DIR}/../config.yaml)
 
+errors=0
+
 # validations
 if [ "$VALIDATE" != "false" ]; then
 	source ${COMMON_DIR}/validate-config.sh
