@@ -1,6 +1,13 @@
 #!/bin/bash
 
 
+#
+
+#	TODO -- this module is not yet tested
+
+#
+
+
 function installNvm {
 	if ssh $1 '[ -e $HOME/.nvm/nvm.sh ]' ; then
 		comment "nvm already installed at $(which nvm)"
