@@ -184,8 +184,6 @@ for i in "${_tasks_queue[@]}"; do
 	filterTasks $i
 done
 
-echo "taskMap='$(jq -c . <<< $_tasks_task_map)'"
-
 for task in ${_tasks_configsRun[@]}; do
 	taskCmdLine="$(debase64 <<< $task)"
 	taskCmd=$(sed -e 's/ .*//' <<< $taskCmdLine)
