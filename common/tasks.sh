@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # validations that need to be run before starting any configurations
-_tasks_validations_queue=()
+_tasks_validations_queue='[]'
 # services modules already loaded, so they don't get loaded twice
 _tasks_services_loaded=()
 # maps services to their task function
@@ -165,11 +165,18 @@ function addTask {
 	fi
 }
 
+source ${COMMON_DIR}/configLib.sh
+
 CONFIG=$(yaml2json ${CONFIG_FILE})
 
+for common in ${DIR}/common/*.sh; do
+	source $common
+done
+
 # validations
-if [ "$VALIDATE" != "false" ]; then
-	for validationScript in ${DIR}/validations/*; do
+validationScripts=(${DIR}/validations/*.sh)
+if [ "$VALIDATE" != "false" ] && [ -e ${validationScripts}  ]; then
+	for validationScript in ${validationScripts[@]}; do
 		if [ "$validationScript" != "README.md" ]; then
 			loadingModule=$(basename "$validationScript" | sed -e 's/.sh$//')
 			source "$validationScript"
@@ -182,6 +189,12 @@ addTask $@
 
 for i in "${_tasks_queue[@]}"; do
 	filterTasks $i
+done
+
+for (( i=0; i < $(jq length <<< $_tasks_validations_queue); i++ )); do
+	validationSpec=$(jq '.[$i|tonumber]' --arg i $i <<< $_tasks_validations_queue)
+	h1 "Validating for $(jq -cr .module <<< $validationSpec): $(jq -c .heading <<< $validationSpec)"
+	$(jq -cr .function <<< $validationSpec)	
 done
 
 for task in ${_tasks_configsRun[@]}; do
@@ -198,6 +211,4 @@ if [ "$errors" != 0 ]; then
 else
 	end 0 "CONFIGURATION SUCCESSFUL"
 fi
-
-
 

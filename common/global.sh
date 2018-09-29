@@ -8,7 +8,7 @@
 # load config
 COMMON_DIR=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)
 
-source ${COMMON_DIR}/../utils/utils.sh friendlyIO arrays strings
+source ${COMMON_DIR}/../_utils/utils.sh friendlyIO arrays strings
 
 # platform differences
 

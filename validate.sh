@@ -24,9 +24,6 @@ fi
 
 
 
-
-
-
 if [ $errors != 0 ]; then
 	end 1 "BUILD FAILED, $errors VALIDATION ERRORS"
 fi

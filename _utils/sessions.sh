@@ -29,10 +29,6 @@ function sshKeycheck {
 		ssh-keygen -b 2048 -t rsa -P '' -f $HOME/.ssh/id_rsa
 	fi
 
-	#
-	#	TODO this is dumb -- replace this with ssh-copy-id
-	#
-
 	ssh -q $1 -qo PasswordAuthentication=no true
 	if [[ $? -ne 0 ]]; then
 		echo "Exchanging ssh keys with $1"
