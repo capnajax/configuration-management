@@ -194,8 +194,14 @@ done
 for (( i=0; i < $(jq length <<< $_tasks_validations_queue); i++ )); do
 	validationSpec=$(jq '.[$i|tonumber]' --arg i $i <<< $_tasks_validations_queue)
 	h1 "Validating for $(jq -cr .module <<< $validationSpec): $(jq -c .heading <<< $validationSpec)"
-	$(jq -cr .function <<< $validationSpec)	
+	if ! $(jq -cr .function <<< $validationSpec); then
+		(( errors++ ))
+	fi
 done
+
+if [ "$errors" != 0 ]; then
+	end 1 "ERRORS IN VALIDATION"
+fi
 
 for task in ${_tasks_configsRun[@]}; do
 	taskCmdLine="$(debase64 <<< $task)"
