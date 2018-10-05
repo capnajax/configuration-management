@@ -16,7 +16,7 @@ function v_uniqueNamesImpl {
 
 	done
 }
-function v_unqiueNames {
+function v_uniqueNames {
 	v_uniqueNamesImpl '.machineTypes|.[]|select(.!=null)|.hosts|.[]|.name'
 	$DEBUG_VALIDATE && comment "${namesFound[@]}"
 }

@@ -191,13 +191,20 @@ for i in "${_tasks_queue[@]}"; do
 	filterTasks $i
 done
 
-for (( i=0; i < $(jq length <<< $_tasks_validations_queue); i++ )); do
-	validationSpec=$(jq '.[$i|tonumber]' --arg i $i <<< $_tasks_validations_queue)
-	h1 "Validating for $(jq -cr .module <<< $validationSpec): $(jq -c .heading <<< $validationSpec)"
-	if ! $(jq -cr .function <<< $validationSpec); then
-		(( errors++ ))
-	fi
-done
+h1 "Running Validations"
+validationSpec
+function runValidations {
+	local validationNum
+	for (( validationNum=0; validationNum < $(jq length <<< $_tasks_validations_queue); validationNum++ )); do
+		validationSpec=$(jq '.[$v|tonumber]' --arg v $validationNum <<< $_tasks_validations_queue)
+		h1 "Validating for $(jq -cr .module <<< $validationSpec): $(jq -c .heading <<< $validationSpec)"
+		jq -cr .function <<< $validationSpec
+		if ! $(jq -cr .function <<< $validationSpec); then
+			(( errors++ ))
+		fi
+	done
+}
+runValidations
 
 if [ "$errors" != 0 ]; then
 	end 1 "ERRORS IN VALIDATION"
