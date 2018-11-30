@@ -192,7 +192,7 @@ for i in "${_tasks_queue[@]}"; do
 done
 
 h1 "Running Validations"
-validationSpec
+validationSpec=''
 function runValidations {
 	local validationNum
 	for (( validationNum=0; validationNum < $(jq length <<< $_tasks_validations_queue); validationNum++ )); do

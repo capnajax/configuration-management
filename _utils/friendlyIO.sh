@@ -134,29 +134,36 @@ function getInput {
 
 }
 
-__startTime=$(date '+%s')
+if [ -z "$__startTime" ]; then
+	__startTime=$(date '+%s')
+fi
 
 function end {
+
 	exitStatus=$1
 	exitMessage=$2
 
-	h1 "${exitMessage}"
+	h1 "${exitMessage}, disableEnd=$disableEnd"
 
-	timeDifference=$(( $(date '+%s') - $__startTime ))
-	timeString="Elapsed time:"
-	if [ $timeDifference -gt 3600 ]; then
-		hours=$(( $timeDifference / 3600 ))
-		timeString="${timeString} ${hours}h"
-	fi
-	if [ $timeDifference -gt 60 ]; then
-		minutes=$(( ($timeDifference % 3600) / 60 ))
-		timeString="${timeString} ${minutes}m"
-	fi
-	timeString="${timeString} $(( $timeDifference % 60 ))s"
+	if [ -z "${disableEnd}" ] || ! $disableEnd; then
 
-	info $timeString
-	sleep 0.1 
-	echo
-	exit ${exitStatus}
+		timeDifference=$(( $(date '+%s') - $__startTime ))
+		timeString="Elapsed time:"
+		if [ $timeDifference -gt 3600 ]; then
+			hours=$(( $timeDifference / 3600 ))
+			timeString="${timeString} ${hours}h"
+		fi
+		if [ $timeDifference -gt 60 ]; then
+			minutes=$(( ($timeDifference % 3600) / 60 ))
+			timeString="${timeString} ${minutes}m"
+		fi
+		timeString="${timeString} $(( $timeDifference % 60 ))s"
+
+		info $timeString
+		sleep 0.1 
+		echo
+		exit ${exitStatus}
+
+	fi
 }
 
